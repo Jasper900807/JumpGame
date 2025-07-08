@@ -19,6 +19,7 @@ public class Player {
 	private boolean onGround = false;
 	private BufferedImage playerImg;
 	private GamePanel panel;
+
 	
 	
 	public Player(float x, float y, GamePanel panel) {
@@ -26,7 +27,7 @@ public class Player {
 		playerX = x;
 		playerY = y;
 		try {
-			playerImg = ImageIO.read(new File("image/ball.png"));
+			playerImg = ImageIO.read(new File("image/player_stand.png"));
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
@@ -95,6 +96,7 @@ public class Player {
 	
 	public void moveRight() {
 		playerX += MOVE_SPEED;
+		
 	}
 	
 	public void moveLeft() {

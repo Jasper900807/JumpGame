@@ -23,6 +23,7 @@ public class GamePanel extends JPanel {
 	
 	private Player player;
 	private LinkedList<Platfrom> platforms;
+	private Animator runRight;
 	
 	
 	
@@ -37,6 +38,8 @@ public class GamePanel extends JPanel {
 		platforms = new LinkedList<>();
 		platforms.add(new Platfrom(500, 480));
 		platforms.add(new Platfrom(300, 430));
+		
+		runRight = new Animator("run_right");
 		
 		
 		System.out.println("test panel");
@@ -60,6 +63,14 @@ public class GamePanel extends JPanel {
 			public void run() {
 				if (rightPressed) {
 					player.moveRight();
+					timer.schedule(new TimerTask() {
+						
+						@Override
+						public void run() {
+							playerImg = runRight.updateAnimation();
+							
+						}
+					}, 0, 300);
 				}
 				if (leftPressed) {
 					player.moveLeft();
