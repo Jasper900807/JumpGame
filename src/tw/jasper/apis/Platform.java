@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class Platfrom {
+public class Platform {
 	private float platX, platY;
 	private int platWidth, platHeight;
 	private BufferedImage platImg;
@@ -14,7 +14,7 @@ public class Platfrom {
 	
 
 
-	public Platfrom(float x, float y) {
+	public Platform(float x, float y) {
 		platX = platLeft = x;
 		platY = platTop = y;
 		try {
