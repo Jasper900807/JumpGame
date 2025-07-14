@@ -12,12 +12,13 @@ public class Player {
     private float playerX, playerY;
     private int playerWidth, playerHeight;
     private float velocityY = 0;
-    private final float GRAVITY = 1.0f;
-    private final float JUMP_STRENGTH = -17;
-    private final int MOVE_SPEED = 7;
     private boolean onGround = false;
     private BufferedImage playerImg;
     private GamePanel panel;
+
+    private boolean isAttacking = false;
+    private long lastAttackEndTime = 0;
+    private static final long ATTACK_COOLDOWN = Config.ATTACK_COOLDOWN; // 0.1秒冷卻
 
     public Player(float x, float y, GamePanel panel) {
         this.panel = panel;
@@ -30,6 +31,7 @@ public class Player {
         }
         playerWidth = playerImg.getWidth();
         playerHeight = playerImg.getHeight();
+        System.out.println("create player");
     }
 
     public BufferedImage getImg() {
@@ -37,23 +39,27 @@ public class Player {
     }
 
     public void checkCollision(LinkedList<Platform> platforms) {
+    	boolean landed = false;
         for (Platform p : platforms) {
+        	float playerCenter = playerX + playerWidth / 2.0f;
             boolean isFalling = velocityY > 0;
             boolean isAbove = playerY + playerHeight <= p.getTop();
             boolean willLand = playerY + playerHeight + velocityY >= p.getTop();
-            boolean inHorizontalRange = playerX + playerWidth > p.getLeft() && playerX < p.getRight();
+            float tolerance = Config.PLATFORM_TOLERANCE; // 使用Config
+            boolean inHorizontalRange = playerCenter + tolerance >= p.getLeft() && playerCenter - tolerance <= p.getRight();
 
             if (isFalling && isAbove && willLand && inHorizontalRange) {
                 playerY = p.getTop() - playerHeight;
                 velocityY = 0;
-                onGround = true;
+                landed = true;
                 break;
             }
         }
+        onGround = landed;
     }
 
     public void applyGravity() {
-        velocityY += GRAVITY;
+        velocityY += Config.GRAVITY;
     }
 
     public void updatePosition() {
@@ -68,6 +74,18 @@ public class Player {
             return;
         }
     }
+    
+    public void setPosition(float x, float y) {
+		this.playerX = x;
+		this.playerY = y;
+	}
+
+    public void updateAttackState() {
+        // 只負責狀態，不再檢查動畫
+        if (isAttacking) {
+            // 由 GamePanel 控制動畫結束時機
+        }
+    }
 
     public float getX() {
         return playerX;
@@ -79,16 +97,29 @@ public class Player {
 
     public void jump() {
         if (onGround) {
-            velocityY = JUMP_STRENGTH;
+            velocityY = Config.JUMP_STRENGTH;
             onGround = false;
         }
     }
+    
+    public void attack() {
+        isAttacking = true;
+        // 動畫重置交由 GamePanel 控制
+    }
+
+    public boolean isAttacking() {
+        return isAttacking;
+    }
+
+    public boolean canAttack() {
+        return !isAttacking && (System.currentTimeMillis() - lastAttackEndTime >= ATTACK_COOLDOWN);
+    }
 
     public void moveRight() {
-        playerX += MOVE_SPEED;
+        playerX += Config.MOVE_SPEED;
     }
 
     public void moveLeft() {
-        playerX -= MOVE_SPEED;
+        playerX -= Config.MOVE_SPEED;
     }
 }

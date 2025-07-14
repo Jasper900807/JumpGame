@@ -16,6 +16,7 @@ public class Animator {
     private int animationCounter = 0;
     private int animationSpeed;
     private int frameCount;
+    private boolean hasPlayedOnce = false; // 新增變數紀錄動畫是否播放過一次
 
     static {
         preloadAnimations();
@@ -35,8 +36,21 @@ public class Animator {
         if (animationCounter >= animationSpeed) {
             frameIndex = (frameIndex + 1) % frameCount;
             animationCounter = 0;
+            if (frameIndex == frameCount - 1) {
+                hasPlayedOnce = true; // 當動畫播放到最後一幀時，將變數設為 true
+            }
         }
         return frames[frameIndex];
+    }
+
+    public void reset() {
+        frameIndex = 0;
+        animationCounter = 0;
+        hasPlayedOnce = false; // 重置時將變數設回 false
+    }
+
+    public boolean isAnimationFinished() {
+        return hasPlayedOnce && frameIndex == frameCount - 1 && animationCounter == 0;
     }
 
     private static void preloadAnimations() {
@@ -76,6 +90,24 @@ public class Animator {
             }
             animations.put("idle_left", idleLeft);
             actionSpeeds.put("idle_left", 10); // Set speed for "idle_left"
+            
+            // attack_right
+            int attackRightFrames = 8;
+            BufferedImage[] attackRight = new BufferedImage[attackRightFrames];
+            for (int i = 0; i < attackRightFrames; i++) {
+                attackRight[i] = ImageIO.read(new File(Config.IMAGE_PATH + "attack_right/attack_right_" + i + ".png"));
+            }
+            animations.put("attack_right", attackRight);
+            actionSpeeds.put("attack_right", 4);
+
+            // attack_left
+            int attackLeftFrames = 8;
+            BufferedImage[] attackLeft = new BufferedImage[attackLeftFrames];
+            for (int i = 0; i < attackLeftFrames; i++) {
+                attackLeft[i] = ImageIO.read(new File(Config.IMAGE_PATH + "attack_left/attack_left_" + i + ".png"));
+            }
+            animations.put("attack_left", attackLeft);
+            actionSpeeds.put("attack_left", 4);
         } catch (Exception e) {
             e.printStackTrace();
         }
